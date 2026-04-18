@@ -1,0 +1,11 @@
+{
+  "name": "snapcraft",
+  "version": "0.1.0",
+  "description": "Application web de création de photos annotées : albums, livres, cartes",
+  "scripts": {
+    "start": "npx serve . -p 3000",
+    "dev": "npx live-server --port=3000"
+  },
+  "keywords": ["photo", "album", "annotation", "pwa"],
+  "license": "MIT"
+}

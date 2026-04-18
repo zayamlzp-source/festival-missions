@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <title>Snapcraft</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="app" id="app">
+
+    <!-- ══════════════════════════════════════
+         SCREEN: Accueil — liste des créations
+    ══════════════════════════════════════ -->
+    <div class="screen active" id="screen-home">
+      <header class="topbar">
+        <span class="topbar-logo">📸 Snapcraft</span>
+        <button class="btn-icon" id="btn-open-settings" aria-label="Réglages">⚙️</button>
+      </header>
+
+      <!-- Filtres par type -->
+      <div class="type-filters" id="type-filters">
+        <button class="type-chip active" data-type="all">Tout</button>
+        <button class="type-chip" data-type="album">Album</button>
+        <button class="type-chip" data-type="livre">Livre</button>
+        <button class="type-chip" data-type="carte">Carte</button>
+      </div>
+
+      <!-- Grille des créations -->
+      <div class="creations-grid" id="creations-grid">
+        <!-- Injectées par app.js -->
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">🖼️</div>
+          <div class="empty-title">Aucune création</div>
+          <div class="empty-sub">Appuie sur + pour commencer</div>
+        </div>
+      </div>
+
+      <!-- FAB : nouvelle création -->
+      <button class="fab" id="btn-new-creation" aria-label="Nouvelle création">+</button>
+    </div>
+
+
+    <!-- ══════════════════════════════════════
+         SCREEN: Choix du type de création
+    ══════════════════════════════════════ -->
+    <div class="screen" id="screen-type-picker">
+      <header class="topbar">
+        <button class="btn-back" id="btn-back-from-type">←</button>
+        <span class="topbar-title">Nouvelle création</span>
+      </header>
+
+      <div class="type-picker-grid">
+
+        <button class="type-card" data-type="album">
+          <div class="type-card-icon">🗂️</div>
+          <div class="type-card-label">Album photo</div>
+          <div class="type-card-desc">Collection de photos avec légendes</div>
+        </button>
+
+        <button class="type-card" data-type="livre">
+          <div class="type-card-icon">📖</div>
+          <div class="type-card-label">Livre</div>
+          <div class="type-card-desc">Pages photo + texte narratif</div>
+        </button>
+
+        <button class="type-card" data-type="carte-souvenir">
+          <div class="type-card-icon">🪪</div>
+          <div class="type-card-label">Carte souvenir</div>
+          <div class="type-card-desc">Style carte postale à garder</div>
+        </button>
+
+        <button class="type-card" data-type="carte-envoi">
+          <div class="type-card-icon">✉️</div>
+          <div class="type-card-label">Carte à envoyer</div>
+          <div class="type-card-desc">Partageable par lien ou QR code</div>
+        </button>
+
+        <button class="type-card" data-type="carte-jeu">
+          <div class="type-card-icon">🃏</div>
+          <div class="type-card-label">Carte de jeu</div>
+          <div class="type-card-desc">Recto / verso illustré</div>
+        </button>
+
+        <button class="type-card" data-type="carte-mission">
+          <div class="type-card-icon">🎯</div>
+          <div class="type-card-label">Carte mission</div>
+          <div class="type-card-desc">Mission photo avec défi</div>
+        </button>
+
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════
+         SCREEN: Éditeur de création
+    ══════════════════════════════════════ -->
+    <div class="screen" id="screen-editor">
+      <header class="topbar">
+        <button class="btn-back" id="btn-back-from-editor">←</button>
+        <input class="topbar-title-input" id="editor-title" type="text" placeholder="Titre..." />
+        <button class="btn-icon" id="btn-editor-share" aria-label="Partager">⬆️</button>
+      </header>
+
+      <!-- Barre d'onglets de l'éditeur -->
+      <div class="editor-tabs">
+        <button class="editor-tab active" data-tab="pages">Pages</button>
+        <button class="editor-tab" data-tab="design">Design</button>
+        <button class="editor-tab" data-tab="export">Export</button>
+      </div>
+
+      <!-- Onglet Pages -->
+      <div class="editor-panel active" id="panel-pages">
+        <div class="album-size-controls" id="album-size-controls">
+          <label for="album-size-range">Taille des photos</label>
+          <input id="album-size-range" type="range" min="45" max="120" step="1" value="70" />
+          <span id="album-size-value">70%</span>
+        </div>
+        <!-- Album scroll — généré par app.js -->
+        <div class="album-scroll" id="album-scroll">
+          <div class="album-empty" id="album-empty">
+            <div class="album-empty-icon">📷</div>
+            <div class="album-empty-label">Aucune photo encore</div>
+            <div class="album-empty-sub">Appuie sur + pour en ajouter</div>
+          </div>
+        </div>
+        <button class="btn-add-page" id="btn-add-page">+ Ajouter des photos</button>
+      </div>
+
+      <!-- Onglet Design -->
+      <div class="editor-panel" id="panel-design">
+        <div class="design-option">
+          <label>Template</label>
+          <div class="template-row" id="template-row">
+            <button class="template-chip active" data-template="simple">Simple</button>
+            <button class="template-chip" data-template="polaroid">Polaroid</button>
+            <button class="template-chip" data-template="magazine">Magazine</button>
+            <button class="template-chip" data-template="dark">Dark</button>
+          </div>
+        </div>
+        <div class="design-option">
+          <label>Couleur de fond</label>
+          <input type="color" id="bg-color-picker" value="#ffffff" />
+        </div>
+        <div class="design-option">
+          <label>Police</label>
+          <select id="font-picker">
+            <option value="serif">Serif (classique)</option>
+            <option value="sans-serif">Sans-serif (moderne)</option>
+            <option value="monospace">Monospace (techno)</option>
+            <option value="cursive">Cursive (manuscrit)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Onglet Export -->
+      <div class="editor-panel" id="panel-export">
+        <div class="export-options">
+          <button class="export-btn" id="btn-export-images">
+            <span class="export-btn-icon">🖼️</span>
+            <span>Exporter en images (ZIP)</span>
+          </button>
+          <button class="export-btn" id="btn-export-pdf">
+            <span class="export-btn-icon">📄</span>
+            <span>Exporter en PDF</span>
+          </button>
+          <button class="export-btn" id="btn-export-link">
+            <span class="export-btn-icon">🔗</span>
+            <span>Générer un lien de partage</span>
+          </button>
+          <button class="export-btn" id="btn-export-qr">
+            <span class="export-btn-icon">⬛</span>
+            <span>Générer un QR code</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════
+         SCREEN: Éditeur de page (canvas)
+    ══════════════════════════════════════ -->
+    <div class="screen" id="screen-page-editor">
+      <header class="topbar">
+        <button class="btn-back" id="btn-back-from-page">←</button>
+        <span class="topbar-title" id="page-editor-title">Page 1</span>
+        <button class="btn-text" id="btn-save-page">Sauver</button>
+      </header>
+
+      <!-- Canvas d'annotation -->
+      <div class="canvas-wrapper" id="canvas-wrapper">
+        <div class="canvas-stage" id="canvas-stage">
+          <img class="canvas-photo" id="canvas-photo" src="" alt="" />
+          <!-- Annotations injectées dynamiquement -->
+        </div>
+      </div>
+
+      <!-- Barre d'outils annotation -->
+      <div class="annotation-toolbar" id="annotation-toolbar">
+        <button class="tool-btn active" data-tool="select" aria-label="Sélectionner">✋</button>
+        <button class="tool-btn" data-tool="text" aria-label="Texte">T</button>
+        <button class="tool-btn" data-tool="sticker" aria-label="Sticker">😀</button>
+        <button class="tool-btn" data-tool="crop" aria-label="Recadrer">✂️</button>
+        <button class="tool-btn" data-tool="filter" aria-label="Filtre">🎨</button>
+        <div class="toolbar-sep"></div>
+        <button class="tool-btn" id="btn-undo" aria-label="Annuler">↩️</button>
+        <button class="tool-btn" id="btn-redo" aria-label="Refaire">↪️</button>
+      </div>
+
+      <!-- Panneau contextuel (text options, sticker picker, etc.) -->
+      <div class="tool-panel hidden" id="tool-panel-text">
+        <input type="text" id="text-input" placeholder="Tape ton texte..." />
+        <div class="text-options">
+          <input type="color" id="text-color" value="#ffffff" />
+          <select id="text-size">
+            <option value="14">Petit</option>
+            <option value="20" selected>Moyen</option>
+            <option value="30">Grand</option>
+            <option value="48">Très grand</option>
+          </select>
+          <button id="btn-add-text">Ajouter</button>
+        </div>
+      </div>
+
+      <div class="tool-panel hidden" id="tool-panel-sticker">
+        <div class="sticker-grid" id="sticker-grid">
+          <!-- Injectés par app.js -->
+        </div>
+      </div>
+
+      <div class="tool-panel hidden" id="tool-panel-filter">
+        <div class="filter-row" id="filter-row">
+          <button class="filter-chip active" data-filter="none">Original</button>
+          <button class="filter-chip" data-filter="bw">N&B</button>
+          <button class="filter-chip" data-filter="sepia">Sépia</button>
+          <button class="filter-chip" data-filter="warm">Chaud</button>
+          <button class="filter-chip" data-filter="cool">Froid</button>
+          <button class="filter-chip" data-filter="vivid">Vif</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════
+         SCREEN: Aperçu (lecture seule)
+    ══════════════════════════════════════ -->
+    <div class="screen" id="screen-preview">
+      <header class="topbar">
+        <button class="btn-back" id="btn-back-from-preview">←</button>
+        <span class="topbar-title" id="preview-title">Aperçu</span>
+        <button class="btn-icon" id="btn-preview-share" aria-label="Partager">⬆️</button>
+      </header>
+      <div class="preview-container" id="preview-container">
+        <!-- Rendu de la création en lecture seule -->
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════
+         SCREEN: Réglages
+    ══════════════════════════════════════ -->
+    <div class="screen" id="screen-settings">
+      <header class="topbar">
+        <button class="btn-back" id="btn-back-from-settings">←</button>
+        <span class="topbar-title">Réglages</span>
+      </header>
+      <div class="settings-list">
+        <div class="settings-section-title">Stockage</div>
+        <div class="settings-row">
+          <span>Mode stockage</span>
+          <select id="storage-mode">
+            <option value="local">Local (appareil)</option>
+            <option value="cloud">Cloud (Supabase)</option>
+          </select>
+        </div>
+        <div class="settings-row" id="row-supabase-url">
+          <span>URL Supabase</span>
+          <input type="text" id="supabase-url" placeholder="https://xxx.supabase.co" />
+        </div>
+        <div class="settings-row" id="row-supabase-key">
+          <span>Clé anon</span>
+          <input type="password" id="supabase-key" placeholder="eyJ..." />
+        </div>
+
+        <div class="settings-section-title">À propos</div>
+        <div class="settings-row">
+          <span>Version</span>
+          <span class="settings-value">0.1.0</span>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════
+         MODALS & OVERLAYS
+    ══════════════════════════════════════ -->
+
+    <!-- Modal: confirmation suppression -->
+    <div class="modal-overlay hidden" id="modal-delete">
+      <div class="modal">
+        <div class="modal-title">Supprimer ?</div>
+        <div class="modal-body" id="modal-delete-body">Cette création sera supprimée définitivement.</div>
+        <div class="modal-actions">
+          <button class="btn-secondary" id="btn-delete-cancel">Annuler</button>
+          <button class="btn-danger" id="btn-delete-confirm">Supprimer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast hidden" id="toast"></div>
+
+    <!-- Construction mode controls (global, live) -->
+    <button class="builder-toggle" id="builder-toggle" aria-label="Mode construction">🛠️</button>
+    <div class="builder-panel hidden" id="builder-panel">
+      <div class="builder-head">
+        <span>Mode construction</span>
+        <button class="builder-close" id="builder-close" aria-label="Fermer">✕</button>
+      </div>
+
+      <div class="builder-row">
+        <label for="builder-ui-scale">Taille interface</label>
+        <input id="builder-ui-scale" type="range" min="85" max="130" step="1" value="100" />
+        <span id="builder-ui-scale-value">100%</span>
+      </div>
+
+      <div class="builder-row">
+        <label for="builder-content-width">Largeur contenu</label>
+        <input id="builder-content-width" type="range" min="280" max="620" step="5" value="420" />
+        <span id="builder-content-width-value">420px</span>
+      </div>
+
+      <div class="builder-row">
+        <label for="builder-home-cols">Colonnes accueil</label>
+        <input id="builder-home-cols" type="range" min="1" max="3" step="1" value="2" />
+        <span id="builder-home-cols-value">2</span>
+      </div>
+
+      <div class="builder-row">
+        <label for="builder-photo-height">Hauteur photos</label>
+        <input id="builder-photo-height" type="range" min="90" max="320" step="2" value="154" />
+        <span id="builder-photo-height-value">154px</span>
+      </div>
+
+      <div class="builder-row">
+        <label for="builder-density">Densité (espacement)</label>
+        <input id="builder-density" type="range" min="70" max="130" step="1" value="100" />
+        <span id="builder-density-value">100%</span>
+      </div>
+
+      <div class="builder-row">
+        <label for="builder-radius">Coins</label>
+        <input id="builder-radius" type="range" min="4" max="24" step="1" value="12" />
+        <span id="builder-radius-value">12px</span>
+      </div>
+
+      <button class="builder-reset" id="builder-reset">Réinitialiser</button>
+    </div>
+
+  </div><!-- /.app -->
+
+  <script src="app.js"></script>
+</body>
+</html>
